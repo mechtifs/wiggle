@@ -1,8 +1,0 @@
-.git*
-Dockerfile*
-*.zip
-LICENSE.txt
-README.md
-rundockertest.sh
-screenshot.gif
-xcf

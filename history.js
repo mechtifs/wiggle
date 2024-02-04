@@ -1,70 +1,38 @@
 'use strict';
 
-const HISTORY_MAX = 500;
-const SHAKE_DEGREES = 500;
+const HISTORY_MAX = 25;
+const RADIANS_THRESHOLD = 15;
+const DISTANCE_THRESHOLD = 180;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const math = Me.imports.math;
+import * as math from './math.js';
 
-let history = [];
-var lastX = 0;
-var lastY = 0;
-var threshold = 300;
 
-/**
- * Check history and report whether the mouse is jiggling.
- * 
- * @return {Boolean}
- */
-function check()
-{
-    // get the current loop timestamp
-    let now = new Date().getTime();
+export default class History {
+    constructor() {
+        this.history = [];
+        this.lastX = 0;
+        this.lastY = 0;
+    }
 
-    // prune stale buffer
-    for (let i = 0; i < history.length; ++i) {
-        if (now - history[i].t > HISTORY_MAX) {
-            history.splice(i, 1);
+    check() {
+        let now = new Date().getTime();
+
+        for (let i = 0; i < this.history.length; i++) {
+            if (now - this.history[i].t > HISTORY_MAX) {
+                this.history.splice(i, 1);
+            }
         }
-    }
 
-    // reset degrees so we can add them again
-    let degrees = 0;
-    let max = 0;
-    // add up gammas (deg=sum(gamma))
-    if (history.length > 2) {
-        for (let i = 2; i < history.length; ++i) {
-            degrees += math.gamma(history[i], history[i-1], history[i-2]);
-            max = Math.max(max, math.distance(history[i-2], history[i-1]), math.distance(history[i-1], history[i]));
+        let radians = 0;
+        let distance = 0;
+        for (let i = 2; i < this.history.length; i++) {
+            radians += math.gamma(this.history[i-2], this.history[i-1], this.history[i]);
+            distance = Math.max(distance, math.distance(this.history[i-1], this.history[i]));
         }
+        return (radians > RADIANS_THRESHOLD && distance > DISTANCE_THRESHOLD);
     }
 
-    return (degrees > SHAKE_DEGREES && max > threshold);
-}
-
-/**
- * Clear the history.
- */
-function clear()
-{
-    lastX = 0;
-    lastY = 0;
-    history = [];
-}
-
-/**
- * Push new mouse coordinates to the history.
- * 
- * @param {Number} x 
- * @param {Number} y 
- */
-function push(x, y)
-{
-    if (x == 0 && y == 0) {
-        return;
+    push(x, y) {
+        this.history.push({x: this.lastX = x, y: this.lastY = y, t: new Date().getTime()});
     }
-    if (x < 0 || y < 0) {
-        return;
-    }
-    history.push({x: lastX = x, y: lastY = y, t: new Date().getTime()});
 }
