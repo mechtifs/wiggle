@@ -9,30 +9,32 @@ import * as math from './math.js';
 
 export default class History {
     constructor() {
-        this.history = [];
-        this.lastX = 0;
-        this.lastY = 0;
+        this._history = [];
+    }
+
+    get lastCoords() {
+        return this._history[this._history.length - 1];
     }
 
     check() {
         let now = new Date().getTime();
 
-        for (let i = 0; i < this.history.length; i++) {
-            if (now - this.history[i].t > HISTORY_MAX) {
-                this.history.splice(i, 1);
+        for (let i = 0; i < this._history.length; i++) {
+            if (now - this._history[i].t > HISTORY_MAX) {
+                this._history.splice(i, 1);
             }
         }
 
         let radians = 0;
         let distance = 0;
-        for (let i = 2; i < this.history.length; i++) {
-            radians += math.gamma(this.history[i-2], this.history[i-1], this.history[i]);
-            distance = Math.max(distance, math.distance(this.history[i-1], this.history[i]));
+        for (let i = 2; i < this._history.length; i++) {
+            radians += math.gamma(this._history[i-2], this._history[i-1], this._history[i]);
+            distance = Math.max(distance, math.distance(this._history[i-1], this._history[i]));
         }
         return (radians > RADIANS_THRESHOLD && distance > DISTANCE_THRESHOLD);
     }
 
     push(x, y) {
-        this.history.push({x: this.lastX = x, y: this.lastY = y, t: new Date().getTime()});
+        this._history.push({x: x, y: y, t: new Date().getTime()});
     }
 }

@@ -8,46 +8,45 @@ import History from './history.js';
 import Effect from './effect.js';
 
 const CHECK_INTERVAL = 200;
-const DRAW_INTERVAL = 10;
+const DRAW_INTERVAL = 8;
 
 
 export default class WiggleExtension extends Extension {
     enable() {
-        this.intervals = [];
-        this.wiggling = false;
-        this.pointerListener;
-        this.pointerWatcher = getPointerWatcher();
-        this.history = new History();
-        let effect = new Effect();
+        this._intervals = [];
+        this._pointerListener;
+        this._pointerWatcher = getPointerWatcher();
+        this._history = new History();
+        this._effect = new Effect();
 
-        this.pointerListener = this.pointerWatcher.addWatch(DRAW_INTERVAL, (x, y) => {
-            this.history.push(x, y);
-            effect.move(x, y);
-        });
-        this.intervals.push(GLib.timeout_add(GLib.PRIORITY_DEFAULT, CHECK_INTERVAL, () => {
-            if (this.history.check()) {
-                if (!this.wiggling) {
-                    this.wiggling = true;
-                    effect.magnify();
-                }
-            } else if (this.wiggling) {
-                this.wiggling = false;
-                effect.unmagnify();
+        this._pointerListener = this._pointerWatcher.addWatch(DRAW_INTERVAL, (x, y) => {
+            this._history.push(x, y);
+            if (this._effect.isWiggling) {
+                this._effect.move(x, y);
             }
-            effect.move(this.history.lastX, this.history.lastY);
+        });
+        this._intervals.push(GLib.timeout_add(GLib.PRIORITY_DEFAULT, CHECK_INTERVAL, () => {
+            if (this._history.check()) {
+                if (!this._effect.isWiggling) {
+                    this._effect.move(this._history.lastCoords.x, this._history.lastCoords.y);
+                    this._effect.magnify();
+                }
+            } else if (this._effect.isWiggling) {
+                this._effect.unmagnify();
+            }
             return true;
         }));
     }
 
     disable() {
-        this.wiggling = false;
-        if (this.pointerListener) {
-            this.pointerWatcher._removeWatch(this.pointerListener);
+        if (this._pointerListener) {
+            this._pointerWatcher._removeWatch(this._pointerListener);
         }
-        this.intervals.map(i => GLib.source_remove(i));
-        this.intervals = [];
-        delete this.pointerListener;
-        delete this.pointerWatcher;
-        delete this.history;
+        this._intervals.map(i => GLib.source_remove(i));
+        delete this._intervals;
+        delete this._effect;
+        delete this._pointerListener;
+        delete this._pointerWatcher;
+        delete this._history;
     }
 }
