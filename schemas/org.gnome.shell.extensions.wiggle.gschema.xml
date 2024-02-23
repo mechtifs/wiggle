@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extension-wiggle">
+  <schema id="org.gnome.shell.extensions.wiggle" path="/org/gnome/shell/extensions/wiggle/">
+    <key name="cursor-size" type="i">
+      <default>96</default>
+    </key>
+    <key name="magnify-duration" type="i">
+      <default>250</default>
+    </key>
+    <key name="unmagnify-duration" type="i">
+      <default>150</default>
+    </key>
+    <key name="sample-size" type="i">
+      <default>25</default>
+    </key>
+    <key name="distance-threshold" type="i">
+      <default>15</default>
+    </key>
+    <key name="radians-threshold" type="i">
+      <default>180</default>
+    </key>
+    <key name="check-interval" type="i">
+      <default>200</default>
+    </key>
+    <key name="draw-interval" type="i">
+      <default>8</default>
+    </key>
+  </schema>
+</schemalist>

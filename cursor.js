@@ -9,6 +9,14 @@ export default class Cursor {
         this._cursorTracker = Meta.CursorTracker.get_for_display(global.display);
     }
 
+    getHot() {
+        return this._cursorTracker.get_hot();
+    }
+
+    getSprite() {
+        return this._cursorTracker.get_sprite();
+    }
+
     show() {
         const seat = Clutter.get_default_backend().get_default_seat();
 

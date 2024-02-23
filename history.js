@@ -1,40 +1,39 @@
 'use strict';
 
-const HISTORY_MAX = 25;
-const RADIANS_THRESHOLD = 15;
-const DISTANCE_THRESHOLD = 180;
-
 import * as math from './math.js';
 
 
 export default class History {
     constructor() {
-        this._history = [];
+        this._samples = [];
+        this.sampleSize = 25;
+        this.radiansThreshold = 15;
+        this.distanceThreshold = 180;
     }
 
     get lastCoords() {
-        return this._history[this._history.length - 1];
+        return this._samples[this._samples.length - 1];
     }
 
     check() {
         let now = new Date().getTime();
 
-        for (let i = 0; i < this._history.length; i++) {
-            if (now - this._history[i].t > HISTORY_MAX) {
-                this._history.splice(i, 1);
+        for (let i = 0; i < this._samples.length; i++) {
+            if (now - this._samples[i].t > this.sampleSize) {
+                this._samples.splice(i, 1);
             }
         }
 
         let radians = 0;
         let distance = 0;
-        for (let i = 2; i < this._history.length; i++) {
-            radians += math.gamma(this._history[i-2], this._history[i-1], this._history[i]);
-            distance = Math.max(distance, math.distance(this._history[i-1], this._history[i]));
+        for (let i = 2; i < this._samples.length; i++) {
+            radians += math.gamma(this._samples[i-2], this._samples[i-1], this._samples[i]);
+            distance = Math.max(distance, math.distance(this._samples[i-1], this._samples[i]));
         }
-        return (radians > RADIANS_THRESHOLD && distance > DISTANCE_THRESHOLD);
+        return (radians > this.radiansThreshold && distance > this.distanceThreshold);
     }
 
     push(x, y) {
-        this._history.push({x: x, y: y, t: new Date().getTime()});
+        this._samples.push({x: x, y: y, t: new Date().getTime()});
     }
 }
