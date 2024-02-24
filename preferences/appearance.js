@@ -31,7 +31,7 @@ export const AppearancePage = GObject.registerClass(
 
             const magnifyDurationRow = new Adw.SpinRow({
                 title: _('Magnify Duration'),
-                subtitle: _('Configure the duration of the magnify effect.'),
+                subtitle: _('Configure the duration (ms) of the magnify effect.'),
                 numeric: true,
                 adjustment: new Gtk.Adjustment({
                     lower: 0,
@@ -43,7 +43,7 @@ export const AppearancePage = GObject.registerClass(
 
             const unmagnifyDurationRow = new Adw.SpinRow({
                 title: _('Unmagify Duration'),
-                subtitle: _('Configure the duration of the unmagify effect.'),
+                subtitle: _('Configure the duration (ms) of the unmagify effect.'),
                 numeric: true,
                 adjustment: new Gtk.Adjustment({
                     lower: 0,

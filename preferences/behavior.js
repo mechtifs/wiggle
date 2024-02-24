@@ -29,9 +29,9 @@ export const BehaviorPage = GObject.registerClass(
             })
             settings.bind('sample-size', sampleSizeRow, 'value', Gio.SettingsBindFlags.DEFAULT)
 
-            const distanceSensitivityRow = new Adw.SpinRow({
-                title: _('Distance Sensitivity'),
-                subtitle: _('Configure the distance sensitivity to trigger the animation.'),
+            const distanceThresholdRow = new Adw.SpinRow({
+                title: _('Distance Threshold'),
+                subtitle: _('Configure the max distance threshold to trigger the animation.'),
                 numeric: true,
                 adjustment: new Gtk.Adjustment({
                     lower: 0,
@@ -39,11 +39,11 @@ export const BehaviorPage = GObject.registerClass(
                     step_increment: 1,
                 }),
             })
-            settings.bind('distance-threshold', distanceSensitivityRow, 'value', Gio.SettingsBindFlags.DEFAULT)
+            settings.bind('distance-threshold', distanceThresholdRow, 'value', Gio.SettingsBindFlags.DEFAULT)
 
-            const angleSensitivityRow = new Adw.SpinRow({
-                title: _('Angle Sensitivity'),
-                subtitle: _('Configure the angle sensitivity to trigger the animation.'),
+            const angleThresholdRow = new Adw.SpinRow({
+                title: _('Angle Threshold'),
+                subtitle: _('Configure the max angle threshold to trigger the animation.'),
                 numeric: true,
                 adjustment: new Gtk.Adjustment({
                     lower: 0,
@@ -51,7 +51,7 @@ export const BehaviorPage = GObject.registerClass(
                     step_increment: 1,
                 }),
             })
-            settings.bind('radians-threshold', angleSensitivityRow, 'value', Gio.SettingsBindFlags.DEFAULT)
+            settings.bind('radians-threshold', angleThresholdRow, 'value', Gio.SettingsBindFlags.DEFAULT)
 
             const checkIntervalRow = new Adw.SpinRow({
                 title: _('Check Interval'),
@@ -66,8 +66,8 @@ export const BehaviorPage = GObject.registerClass(
             settings.bind('check-interval', checkIntervalRow, 'value', Gio.SettingsBindFlags.DEFAULT)
 
             const drawIntervalRow = new Adw.SpinRow({
-                title: _('Draw Interval'),
-                subtitle: _('Configure the interval of drawing the cursor.'),
+                title: _('Draw Interval/Sample Rate'),
+                subtitle: _('Configure the interval of drawing the cursor and sampling the cursor track. You may need to adjust trigger parameters as well.'),
                 numeric: true,
                 adjustment: new Gtk.Adjustment({
                     lower: 0,
@@ -89,8 +89,8 @@ export const BehaviorPage = GObject.registerClass(
 
             this.add(_triggerParametersGroup);
             _triggerParametersGroup.add(sampleSizeRow)
-            _triggerParametersGroup.add(distanceSensitivityRow)
-            _triggerParametersGroup.add(angleSensitivityRow)
+            _triggerParametersGroup.add(distanceThresholdRow)
+            _triggerParametersGroup.add(angleThresholdRow)
             this.add(_intervalsGroup);
             _intervalsGroup.add(checkIntervalRow)
             _intervalsGroup.add(drawIntervalRow)

@@ -9,7 +9,7 @@ import Effect from './effect.js';
 
 
 export default class WiggleExtension extends Extension {
-    updateCheckSettings() {
+    updateCheckTimer() {
         if (this._checkTimer) {
             GLib.source_remove(this._checkTimer);
         }
@@ -26,7 +26,7 @@ export default class WiggleExtension extends Extension {
         });
     }
 
-    updateDrawSettings() {
+    updateDrawTimer() {
         if (this._drawTimer) {
             this._pointerWatcher._removeWatch(this._drawTimer);
         }
@@ -74,15 +74,15 @@ export default class WiggleExtension extends Extension {
         });
         this._settings.connect('changed::check-interval', () => {
             this._checkInterval = this._settings.get_int('check-interval');
-            this.updateCheckSettings();
+            this.updateCheckTimer();
         });
         this._settings.connect('changed::draw-interval', () => {
             this._drawInterval = this._settings.get_int('draw-interval');
-            this.updateDrawSettings();
+            this.updateDrawTimer();
         });
 
-        this.updateCheckSettings();
-        this.updateDrawSettings();
+        this.updateCheckTimer();
+        this.updateDrawTimer();
     }
 
     disable() {
@@ -93,7 +93,6 @@ export default class WiggleExtension extends Extension {
             GLib.source_remove(this._checkTimer);
         }
         delete this._settings;
-        delete this._intervals;
         delete this._effect;
         delete this._drawTimer;
         delete this._pointerWatcher;

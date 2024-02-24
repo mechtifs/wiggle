@@ -9,11 +9,11 @@ export default class Cursor {
         this._cursorTracker = Meta.CursorTracker.get_for_display(global.display);
     }
 
-    getHot() {
+    get hot() {
         return this._cursorTracker.get_hot();
     }
 
-    getSprite() {
+    get sprite() {
         return this._cursorTracker.get_sprite();
     }
 

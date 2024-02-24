@@ -9,7 +9,7 @@ Wiggle is a GNOME 45+ port/fix for [Jiggle](https://github.com/jeffchannell/jigg
 - Scale effect only
 - Use cursor bitmap directly exported from Adwaita source SVG
 
-## Preview
+## Screenshots
 
-![Preference_Appearance](https://github.com/mechtifs/wiggle/assets/18751876/874e6a34-e441-4445-9ffa-2b60df17dac2)
-![Preference_Behavior](https://github.com/mechtifs/wiggle/assets/18751876/6a57a792-34db-40c6-ab87-f01df3c467d8)
+![Preference_Appearance](https://github.com/mechtifs/wiggle/assets/18751876/589ef4c9-22bb-4696-9cc8-a45b51bc0f2f)
+![Preference_Behavior](https://github.com/mechtifs/wiggle/assets/18751876/be2ea0c4-fb24-4cc2-95b4-ca92f15579a2)
