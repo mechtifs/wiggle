@@ -9,8 +9,8 @@ import {
 } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 
 
-export const ApperancePage = GObject.registerClass(
-    class WiggleApperancePage extends Adw.PreferencesPage {
+export const AppearancePage = GObject.registerClass(
+    class WiggleAppearancePage extends Adw.PreferencesPage {
         _init(settings) {
             super._init({
                 title: _('Appearance'),
