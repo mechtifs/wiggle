@@ -14,10 +14,10 @@
       <default>25</default>
     </key>
     <key name="distance-threshold" type="i">
-      <default>15</default>
+      <default>180</default>
     </key>
     <key name="radians-threshold" type="i">
-      <default>180</default>
+      <default>15</default>
     </key>
     <key name="check-interval" type="i">
       <default>200</default>

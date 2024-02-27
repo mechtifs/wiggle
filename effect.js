@@ -21,9 +21,10 @@ export default class Effect extends St.Icon {
         this.magnifyDuration = 250;
         this.unmagnifyDuration = 150;
         this.isWiggling = false;
+        this.showCursor = false;
         this._cursor = new Cursor();
         [this._hotX, this._hotY] = this._cursor.hot;
-        this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.png');
+        this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
         this._sprite = this._cursor.sprite;
         this._spriteSize = this._sprite.get_width();
         this._pivot = new Graphene.Point({

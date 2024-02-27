@@ -12,8 +12,8 @@ Wiggle is a GNOME 45+ port/fix for [Jiggle](https://github.com/jeffchannell/jigg
 
 - Support GNOME 45+
 - Ditch Tweener in favor of Clutter
-- Scale effect only
-- Use cursor bitmap directly exported from Adwaita source SVG
+- Scaling effect only
+- Use cursor svg from Adwaita upstream
 
 ## Screenshots
 

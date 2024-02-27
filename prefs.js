@@ -2,18 +2,41 @@
 
 import {
     ExtensionPreferences,
-    gettext as _,
+    gettext,
 } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
-import { AppearancePage } from './preferences/appearance.js'
-import { BehaviorPage } from './preferences/behavior.js'
+
+import * as UI from './ui.js'
 
 
 export default class WigglePreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
-        window.set_title(_("Wiggle"));
+        window.set_title(gettext("Wiggle"));
         const _settings = this.getSettings();
-        const _appearancePage = new AppearancePage(_settings);
-        const _behaviorPage = new BehaviorPage(_settings);
+
+        const _appearancePage = new UI.Page('Appearance', 'org.gnome.Settings-appearance', [
+            new UI.Group('Cursor Icon', 'Configure the appearance of the cursor icon.', [
+                ['cursor-size', UI.nSpin('Cursor Size', 'Configure the size of the cursor.', 24, 256, 1), 'value']
+            ]),
+            new UI.Group('Cursor Effect', 'Configure the appearance of the cursor effect.', [
+                ['magnify-duration', UI.nSpin('Magnify Duration', 'Configure the duration (ms) of the magnify animation.', 0, 10000, 1), 'value'],
+                ['unmagnify-duration', UI.nSpin('Unmagify Duration', 'Configure the duration (ms) of the unmagify animation.', 0, 10000, 1), 'value']
+            ])
+        ]);
+
+        const _behaviorPage = new UI.Page('Behavior', 'org.gnome.Settings-mouse', [
+            new UI.Group('Trigger Parameters', 'Configure the parameters to trigger the animation.', [
+                ['sample-size', UI.nSpin('Sample Size', 'Configure the sample size of the cursor track.', 0, 1024, 1), 'value'],
+                ['distance-threshold', UI.nSpin('Distance Threshold', 'Configure the distance threshold to trigger the animation.', 0, 1920, 1), 'value'],
+                ['radians-threshold', UI.nSpin('Radians Threshold', 'Configure the angle threshold to trigger the animation.', 0, 512, 1), 'value']
+            ]),
+            new UI.Group('Timer Intervals', 'Configure the intervals of the timers.', [
+                ['check-interval', UI.nSpin('Check Interval', 'Configure the interval of checking if Wiggle should trigger the animation.', 0, 1000, 1), 'value'],
+                ['draw-interval', UI.nSpin('Draw Interval/Sample Rate', 'Configure the interval of drawing the cursor and sampling the cursor track. You may need to adjust trigger parameters as well.', 0, 1000, 1), 'value']
+            ])
+        ]);
+
+        _appearancePage.bind(_settings);
+        _behaviorPage.bind(_settings);
 
         window.add(_appearancePage);
         window.add(_behaviorPage);
