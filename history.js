@@ -1,5 +1,7 @@
 'use strict';
 
+import GLib from 'gi://GLib';
+
 import * as math from './math.js';
 
 
@@ -16,10 +18,10 @@ export default class History {
     }
 
     check() {
-        let now = new Date().getTime();
+        let now = GLib.get_monotonic_time();
 
         for (let i = 0; i < this._samples.length; i++) {
-            if (now - this._samples[i].t > this.sampleSize) {
+            if (now - this._samples[i].t > this.sampleSize * 1000) {
                 this._samples.splice(i, 1);
             }
         }
@@ -34,6 +36,6 @@ export default class History {
     }
 
     push(x, y) {
-        this._samples.push({x: x, y: y, t: new Date().getTime()});
+        this._samples.push({x: x, y: y, t: GLib.get_monotonic_time()});
     }
 }

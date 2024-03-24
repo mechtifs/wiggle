@@ -22,11 +22,10 @@ export default class Effect extends St.Icon {
         this.unmagnifyDuration = 150;
         this.isWiggling = false;
         this.showCursor = false;
+        this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
         this._cursor = new Cursor();
         [this._hotX, this._hotY] = this._cursor.hot;
-        this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
-        this._sprite = this._cursor.sprite;
-        this._spriteSize = this._sprite.get_width();
+        this._spriteSize = this._cursor.sprite ? this._cursor.sprite.get_width() : 24;
         this._pivot = new Graphene.Point({
             x: this._hotX / this._spriteSize,
             y: this._hotY / this._spriteSize,
@@ -38,6 +37,10 @@ export default class Effect extends St.Icon {
         this._ratio = size / this._spriteSize;
     }
 
+    set cursorPath(path) {
+        this.gicon = Gio.Icon.new_for_string(path ? path : GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
+    }
+
     move(x, y) {
         this.set_position(
             x - this._hotX * this._ratio,
@@ -47,7 +50,7 @@ export default class Effect extends St.Icon {
 
     magnify() {
         this.isWiggling = true;
-        Main.uiGroup.add_actor(this);
+        Main.uiGroup.add_child(this);
         this._cursor.hide();
         this.remove_all_transitions();
         this.ease({
@@ -68,7 +71,7 @@ export default class Effect extends St.Icon {
             scale_y: 1.0 / this._ratio,
             pivot_point: this._pivot,
             onComplete: () => {
-                Main.uiGroup.remove_actor(this);
+                Main.uiGroup.remove_child(this);
                 this._cursor.show();
                 this.isWiggling = false;
             }

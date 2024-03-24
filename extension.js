@@ -6,14 +6,16 @@ import { getPointerWatcher } from 'resource:///org/gnome/shell/ui/pointerWatcher
 
 import History from './history.js';
 import Effect from './effect.js';
+import { initSettings } from './utils.js';
+import { Field } from './const.js';
 
 
 export default class WiggleExtension extends Extension {
-    _setCheckInterval(interval) {
-        if (this._checkTimer) {
-            GLib.source_remove(this._checkTimer);
+    _onCheckIntervalChange(interval) {
+        if (this._checkIntervalId) {
+            GLib.source_remove(this._checkIntervalId);
         }
-        this._checkTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, interval, () => {
+        this._checkIntervalId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, interval, () => {
             if (this._history.check()) {
                 if (!this._effect.isWiggling) {
                     this._effect.move(this._history.lastCoords.x, this._history.lastCoords.y);
@@ -26,11 +28,11 @@ export default class WiggleExtension extends Extension {
         });
     }
 
-    _setDrawInterval(interval) {
-        if (this._drawTimer) {
-            this._pointerWatcher._removeWatch(this._drawTimer);
+    _onDrawIntervalChange(interval) {
+        if (this._drawIntervalId) {
+            this._pointerWatcher._removeWatch(this._drawIntervalId);
         }
-        this._drawTimer = this._pointerWatcher.addWatch(interval, (x, y) => {
+        this._drawIntervalId = this._pointerWatcher.addWatch(interval, (x, y) => {
             this._history.push(x, y);
             if (this._effect.isWiggling) {
                 this._effect.move(x, y);
@@ -38,58 +40,36 @@ export default class WiggleExtension extends Extension {
         });
     }
 
-    _initSettings() {
-        const entries = [
-            ['cursor-size', 'i', (r) => this._effect.cursorSize = r],
-            ['magnify-duration', 'i', (r) => this._effect.magnifyDuration = r],
-            ['unmagnify-duration', 'i', (r) => this._effect.unmagnifyDuration = r],
-            ['sample-size', 'i', (r) => this._history.sampleSize = r],
-            ['radians-threshold', 'i', (r) => this._history.radiansThreshold = r],
-            ['distance-threshold', 'i', (r) => this._history.distanceThreshold = r],
-            ['check-interval', 'i', (r) => this._setCheckInterval(r)],
-            ['draw-interval', 'i', (r) => this._setDrawInterval(r)],
-        ]
-        const getPrefValue = (name, type) => {
-            switch (type) {
-                case 'i':
-                    return this._settings.get_int(name);
-                case 'b':
-                    return this._settings.get_boolean(name);
-                case 's':
-                    return this._settings.get_string(name);
-                case 'd':
-                    return this._settings.get_double(name);
-                default:
-                    throw new Error(`Unknown type: ${type}`);
-            }
-        }
-        this._settings = this.getSettings();
-        entries.forEach(([name, type, func]) => {
-            func(getPrefValue(name, type));
-            this._settings.connect(`changed::${name}`, () => {
-                func(getPrefValue(name, type));
-            });
-        });
-    }
-
     enable() {
         this._pointerWatcher = getPointerWatcher();
         this._history = new History();
         this._effect = new Effect();
-        this._initSettings();
+        this._settings = this.getSettings();
+        initSettings(this._settings, [
+            [Field.SIZE, 'i', (r) => this._effect.cursorSize = r],
+            [Field.PATH, 's', (r) => this._effect.cursorPath = r],
+            [Field.MAGN, 'i', (r) => this._effect.magnifyDuration = r],
+            [Field.UMGN, 'i', (r) => this._effect.unmagnifyDuration = r],
+
+            [Field.SAMP, 'i', (r) => this._history.sampleSize = r],
+            [Field.RADI, 'i', (r) => this._history.radiansThreshold = r],
+            [Field.DIST, 'i', (r) => this._history.distanceThreshold = r],
+            [Field.CHCK, 'i', (r) => this._onCheckIntervalChange(r)],
+            [Field.DRAW, 'i', (r) => this._onDrawIntervalChange(r)],
+        ]);
     }
 
     disable() {
-        if (this._drawTimer) {
-            this._pointerWatcher._removeWatch(this._drawTimer);
+        if (this._drawIntervalId) {
+            this._pointerWatcher._removeWatch(this._drawIntervalId);
+            this._drawIntervalId = null;
         }
-        if (this._checkTimer) {
-            GLib.source_remove(this._checkTimer);
+        if (this._checkIntervalId) {
+            GLib.source_remove(this._checkIntervalId);
         }
-        delete this._settings;
-        delete this._effect;
-        delete this._drawTimer;
-        delete this._pointerWatcher;
-        delete this._history;
+        this._settings = null;
+        this._effect = null;
+        this._pointerWatcher = null;
+        this._history = null;
     }
 }

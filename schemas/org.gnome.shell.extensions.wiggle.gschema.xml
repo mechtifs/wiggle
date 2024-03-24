@@ -4,6 +4,9 @@
     <key name="cursor-size" type="i">
       <default>96</default>
     </key>
+    <key name="cursor-path" type="s">
+      <default>""</default>
+    </key>
     <key name="magnify-duration" type="i">
       <default>250</default>
     </key>
