@@ -50,6 +50,7 @@ export default class WiggleExtension extends Extension {
             [Field.PATH, 's', (r) => this._effect.cursorPath = r],
             [Field.MAGN, 'i', (r) => this._effect.magnifyDuration = r],
             [Field.UMGN, 'i', (r) => this._effect.unmagnifyDuration = r],
+            [Field.ENLG, 'i', (r) => this._effect.enlargedDuration = r],
 
             [Field.SAMP, 'i', (r) => this._history.sampleSize = r],
             [Field.RADI, 'i', (r) => this._history.radiansThreshold = r],
