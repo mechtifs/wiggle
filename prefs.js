@@ -17,7 +17,7 @@ export default class WigglePreferences extends ExtensionPreferences {
         const _appearancePage = new UI.PrefPage('Appearance', 'org.gnome.Settings-appearance', [
             new UI.PrefGroup('Cursor Icon', 'Configure the appearance of the cursor icon.', [
                 [Field.SIZE, UI.nSpin('Cursor Size', 'Configure the size of the cursor.', 24, 256, 1)],
-                [Field.PATH, UI.nEntry('Cursor Image Path')]
+                [Field.PATH, UI.nEntry('Cursor Icon Path')]
             ]),
             new UI.PrefGroup('Cursor Effect', 'Configure the appearance of the cursor effect.', [
                 [Field.MAGN, UI.nSpin('Magnify Duration', 'Configure the duration (ms) of the magnify animation.', 0, 10000, 1)],

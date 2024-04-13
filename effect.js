@@ -8,7 +8,6 @@ import GLib from 'gi://GLib';
 import Graphene from 'gi://Graphene';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-import Cursor from './cursor.js';
 
 
 export default class Effect extends St.Icon {
@@ -16,14 +15,12 @@ export default class Effect extends St.Icon {
         GObject.registerClass(this);
     }
 
-    constructor() {
+    constructor(cursor) {
         super();
         this.magnifyDuration = 250;
         this.unmagnifyDuration = 150;
         this.isWiggling = false;
-        this.showCursor = false;
-        this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
-        this._cursor = new Cursor();
+        this._cursor = cursor;
         [this._hotX, this._hotY] = this._cursor.hot;
         this._spriteSize = this._cursor.sprite ? this._cursor.sprite.get_width() : 24;
         this._pivot = new Graphene.Point({

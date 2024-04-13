@@ -6,6 +6,7 @@ import { getPointerWatcher } from 'resource:///org/gnome/shell/ui/pointerWatcher
 
 import History from './history.js';
 import Effect from './effect.js';
+import Cursor from './cursor.js';
 import { initSettings } from './utils.js';
 import { Field } from './const.js';
 
@@ -16,6 +17,20 @@ export default class WiggleExtension extends Extension {
             GLib.source_remove(this._checkIntervalId);
         }
         this._checkIntervalId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, interval, () => {
+            if (!this._cursor.sprite) {
+                if (!this._isPaused) {
+                    if (this._effect.isWiggling) {
+                        this._effect.unmagnify();
+                    }
+                    this._removePointerWatch();
+                    this._isPaused = true;
+                }
+                return true;
+            }
+            if (this._isPaused) {
+                this._onDrawIntervalChange(this._drawInterval);
+                this._isPaused = false;
+            }
             if (this._history.check()) {
                 if (!this._effect.isWiggling) {
                     this._effect.move(this._history.lastCoords.x, this._history.lastCoords.y);
@@ -29,6 +44,7 @@ export default class WiggleExtension extends Extension {
     }
 
     _onDrawIntervalChange(interval) {
+        this._drawInterval = interval
         if (this._drawIntervalId) {
             this._pointerWatcher._removeWatch(this._drawIntervalId);
         }
@@ -40,10 +56,18 @@ export default class WiggleExtension extends Extension {
         });
     }
 
+    _removePointerWatch() {
+        if (this._drawIntervalId) {
+            this._pointerWatcher._removeWatch(this._drawIntervalId);
+            this._drawIntervalId = null;
+        }
+    }
+
     enable() {
         this._pointerWatcher = getPointerWatcher();
         this._history = new History();
-        this._effect = new Effect();
+        this._cursor = new Cursor();
+        this._effect = new Effect(this._cursor);
         this._settings = this.getSettings();
         initSettings(this._settings, [
             [Field.SIZE, 'i', (r) => this._effect.cursorSize = r],
@@ -60,16 +84,14 @@ export default class WiggleExtension extends Extension {
     }
 
     disable() {
-        if (this._drawIntervalId) {
-            this._pointerWatcher._removeWatch(this._drawIntervalId);
-            this._drawIntervalId = null;
-        }
         if (this._checkIntervalId) {
             GLib.source_remove(this._checkIntervalId);
         }
-        this._settings = null;
-        this._effect = null;
+        this._removePointerWatch();
         this._pointerWatcher = null;
+        this._cursor = null;
+        this._effect = null;
         this._history = null;
+        this._settings = null;
     }
 }
