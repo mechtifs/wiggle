@@ -13,7 +13,7 @@ export const nCombo = (title, subtitle, items, selected) => new Adw.ComboRow({
     title: _(title),
     subtitle: _(subtitle),
     model: new Gtk.StringList({
-        strings: items,
+        strings: items
     }),
     selected: selected
 });
@@ -29,7 +29,7 @@ export const nSpin = (title, subtitle, min, max, step) => new Adw.SpinRow({
     adjustment: new Gtk.Adjustment({
         lower: min,
         upper: max,
-        step_increment: step,
+        step_increment: step
     })
 });
 
@@ -53,23 +53,12 @@ export class PrefGroup extends Adw.PreferencesGroup {
 
     bind(settings) {
         this._rows.forEach(([key, obj]) => {
-            let prop;
-            switch (obj.constructor.name) {
-            case 'Adw_ComboRow':
-                prop = 'selected';
-                break;
-            case 'Adw_EntryRow':
-                prop = 'text';
-                break;
-            case 'Adw_SpinRow':
-                prop = 'value';
-                break;
-            case 'Adw_SwitchRow':
-                prop = 'active';
-                break;
-            default:
-                throw new Error('Unsupported object type');
-            }
+            let prop = {
+                'Adw_ComboRow': 'selected',
+                'Adw_EntryRow': 'text',
+                'Adw_SpinRow': 'value',
+                'Adw_SwitchRow': 'active'
+            }[obj.constructor.name];
             this.add(obj);
             settings.bind(key, obj, prop, Gio.SettingsBindFlags.DEFAULT);
         });

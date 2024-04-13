@@ -44,7 +44,7 @@ export default class WiggleExtension extends Extension {
     }
 
     _onDrawIntervalChange(interval) {
-        this._drawInterval = interval
+        this._drawInterval = interval;
         if (this._drawIntervalId) {
             this._pointerWatcher._removeWatch(this._drawIntervalId);
         }
@@ -74,6 +74,7 @@ export default class WiggleExtension extends Extension {
             [Field.PATH, 's', (r) => this._effect.cursorPath = r],
             [Field.MAGN, 'i', (r) => this._effect.magnifyDuration = r],
             [Field.UMGN, 'i', (r) => this._effect.unmagnifyDuration = r],
+            [Field.DLAY, 'i', (r) => this._effect.unmagnifyDelay = r],
 
             [Field.SAMP, 'i', (r) => this._history.sampleSize = r],
             [Field.RADI, 'i', (r) => this._history.radiansThreshold = r],

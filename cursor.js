@@ -26,7 +26,7 @@ export default class Cursor {
 
         if (this._visibilityChangedId) {
             this._tracker.disconnect(this._visibilityChangedId);
-            delete this._visibilityChangedId;
+            this._visibilityChangedId = null;
 
             this._tracker.set_pointer_visible(true);
         }

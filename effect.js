@@ -19,13 +19,14 @@ export default class Effect extends St.Icon {
         super();
         this.magnifyDuration = 250;
         this.unmagnifyDuration = 150;
+        this.unmagnifyDelay = 0;
         this.isWiggling = false;
         this._cursor = cursor;
         [this._hotX, this._hotY] = this._cursor.hot;
         this._spriteSize = this._cursor.sprite ? this._cursor.sprite.get_width() : 24;
         this._pivot = new Graphene.Point({
             x: this._hotX / this._spriteSize,
-            y: this._hotY / this._spriteSize,
+            y: this._hotY / this._spriteSize
         });
     }
 
@@ -55,23 +56,30 @@ export default class Effect extends St.Icon {
             transition: Clutter.AnimationMode.EASE_IN_QUAD,
             scale_x: 1.0,
             scale_y: 1.0,
-            pivot_point: this._pivot,
-        })
+            pivot_point: this._pivot
+        });
     }
 
     unmagnify() {
-        this.remove_all_transitions();
-        this.ease({
-            duration: this.unmagnifyDuration,
-            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            scale_x: 1.0 / this._ratio,
-            scale_y: 1.0 / this._ratio,
-            pivot_point: this._pivot,
-            onComplete: () => {
-                Main.uiGroup.remove_child(this);
-                this._cursor.show();
-                this.isWiggling = false;
-            }
+        if (this._isInTransition) {
+            return;
+        }
+        this._isInTransition = true;
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, this.unmagnifyDelay, () => {
+            this.remove_all_transitions();
+            this.ease({
+                duration: this.unmagnifyDuration,
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                scale_x: 1.0 / this._ratio,
+                scale_y: 1.0 / this._ratio,
+                pivot_point: this._pivot,
+                onComplete: () => {
+                    Main.uiGroup.remove_child(this);
+                    this._cursor.show();
+                    this.isWiggling = false;
+                    this._isInTransition = false;
+                }
+            });
         });
     }
 }
