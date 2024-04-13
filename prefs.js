@@ -22,7 +22,6 @@ export default class WigglePreferences extends ExtensionPreferences {
             new UI.PrefGroup('Cursor Effect', 'Configure the appearance of the cursor effect.', [
                 [Field.MAGN, UI.nSpin('Magnify Duration', 'Configure the duration (ms) of the magnify animation.', 0, 10000, 1)],
                 [Field.UMGN, UI.nSpin('Unmagify Duration', 'Configure the duration (ms) of the unmagify animation.', 0, 10000, 1)]
-                [Field.ENLG, UI.nSpin('Enlarged Duration', 'Configure the duration (ms) of the enlarged animation.', 0, 10000, 1)]
             ])
         ]);
 

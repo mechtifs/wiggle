@@ -3,7 +3,6 @@ export const Field = {
     PATH: 'cursor-path',
     MAGN: 'magnify-duration',
     UMGN: 'unmagnify-duration',
-    ENLG: 'enlarged-duration',
 
     SAMP: 'sample-size',
     RADI: 'radians-threshold',

@@ -13,9 +13,6 @@
     <key name="unmagnify-duration" type="i">
       <default>150</default>
     </key>
-    <key name="enlarged-duration" type="i">
-      <default>500</default>
-    </key>
     <key name="sample-size" type="i">
       <default>25</default>
     </key>

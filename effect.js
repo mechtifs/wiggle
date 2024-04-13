@@ -20,7 +20,6 @@ export default class Effect extends St.Icon {
         super();
         this.magnifyDuration = 250;
         this.unmagnifyDuration = 150;
-        this.enlargedDuration = 500;
         this.isWiggling = false;
         this.showCursor = false;
         this.gicon = Gio.Icon.new_for_string(GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
@@ -63,16 +62,7 @@ export default class Effect extends St.Icon {
         })
     }
 
-    /*
-    * Just a simple sleep function
-    */
-    async sleep(ms){
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // Made this function async so that we can wait for the sleep
-    async unmagnify() {
-        await this.sleep(this.enlargedDuration);
+    unmagnify() {
         this.remove_all_transitions();
         this.ease({
             duration: this.unmagnifyDuration,
