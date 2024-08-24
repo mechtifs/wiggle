@@ -3,7 +3,6 @@
 import Clutter from 'gi://Clutter';
 import Meta from 'gi://Meta';
 
-
 export default class Cursor {
     constructor() {
         this._tracker = Meta.CursorTracker.get_for_display(global.display);

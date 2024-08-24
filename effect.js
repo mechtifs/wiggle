@@ -1,32 +1,34 @@
 'use strict';
 
-import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
-import St from 'gi://St';
 import Clutter from 'gi://Clutter';
+import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
 import Graphene from 'gi://Graphene';
+import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
-
+import Cursor from './cursor.js';
 
 export default class Effect extends St.Icon {
     static {
         GObject.registerClass(this);
     }
 
-    constructor(cursor) {
+    constructor() {
         super();
+        this.isHidden = true;
         this.magnifyDuration = 250;
         this.unmagnifyDuration = 150;
         this.unmagnifyDelay = 0;
         this.isWiggling = false;
-        this._cursor = cursor;
-        [this._hotX, this._hotY] = this._cursor.hot;
-        this._spriteSize = this._cursor.sprite ? this._cursor.sprite.get_width() : 24;
+        this.cursor = new Cursor();
+        [this._hotX, this._hotY] = this.cursor.hot;
+        this._spriteSize = this.cursor.sprite ? this.cursor.sprite.get_width() : 24;
+
         this._pivot = new Graphene.Point({
             x: this._hotX / this._spriteSize,
-            y: this._hotY / this._spriteSize
+            y: this._hotY / this._spriteSize,
         });
     }
 
@@ -36,27 +38,26 @@ export default class Effect extends St.Icon {
     }
 
     set cursorPath(path) {
-        this.gicon = Gio.Icon.new_for_string(path ? path : GLib.path_get_dirname(import.meta.url.slice(7))+'/icons/cursor.svg');
+        this.gicon = Gio.Icon.new_for_string(path || GLib.path_get_dirname(import.meta.url.slice(7)) + '/icons/cursor.svg');
     }
 
     move(x, y) {
-        this.set_position(
-            x - this._hotX * this._ratio,
-            y - this._hotY * this._ratio
-        );
+        this.set_position(x - this._hotX * this._ratio, y - this._hotY * this._ratio);
     }
 
     magnify() {
         this.isWiggling = true;
         Main.uiGroup.add_child(this);
-        this._cursor.hide();
+        if (this.isHidden) {
+            this.cursor.hide();
+        }
         this.remove_all_transitions();
         this.ease({
             duration: this.magnifyDuration,
             transition: Clutter.AnimationMode.EASE_IN_QUAD,
             scale_x: 1.0,
             scale_y: 1.0,
-            pivot_point: this._pivot
+            pivot_point: this._pivot,
         });
     }
 
@@ -75,10 +76,12 @@ export default class Effect extends St.Icon {
                 pivot_point: this._pivot,
                 onComplete: () => {
                     Main.uiGroup.remove_child(this);
-                    this._cursor.show();
+                    if (this.isHidden) {
+                        this.cursor.show();
+                    }
                     this.isWiggling = false;
                     this._isInTransition = false;
-                }
+                },
             });
         });
     }

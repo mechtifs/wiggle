@@ -1,4 +1,7 @@
+'use strict';
+
 export const Field = {
+    HIDE: 'hide-cursor',
     SIZE: 'cursor-size',
     PATH: 'cursor-path',
     MAGN: 'magnify-duration',
@@ -9,5 +12,5 @@ export const Field = {
     RADI: 'radians-threshold',
     DIST: 'distance-threshold',
     CHCK: 'check-interval',
-    DRAW: 'draw-interval'
+    DRAW: 'draw-interval',
 };
