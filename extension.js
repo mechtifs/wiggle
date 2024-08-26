@@ -113,8 +113,9 @@ export default class WiggleExtension extends Extension {
             GLib.source_remove(this._checkIntervalWatcher);
         }
         this._togglePointerWatcher(false);
-        this._pointerWatcher = null;
+        this._effect.destroy();
         this._effect = null;
+        this._pointerWatcher = null;
         this._history = null;
         this._settings = null;
     }

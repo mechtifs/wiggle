@@ -9,5 +9,5 @@
   "uuid": "wiggle@mechtifs",
   "settings-schema": "org.gnome.shell.extensions.wiggle",
   "gettext-domain": "gnome-shell-extension-wiggle",
-  "version": 4
+  "version": 5
 }

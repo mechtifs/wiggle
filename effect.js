@@ -66,7 +66,7 @@ export default class Effect extends St.Icon {
             return;
         }
         this._isInTransition = true;
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, this.unmagnifyDelay, () => {
+        this._unmagnifyDelayId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, this.unmagnifyDelay, () => {
             this.remove_all_transitions();
             this.ease({
                 duration: this.unmagnifyDuration,
@@ -84,5 +84,11 @@ export default class Effect extends St.Icon {
                 },
             });
         });
+    }
+
+    destroy() {
+        if (this._unmagnifyDelayId) {
+            GLib.source_remove(this._unmagnifyDelayId);
+        }
     }
 }
