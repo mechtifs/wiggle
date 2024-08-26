@@ -6,8 +6,8 @@ import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import Graphene from 'gi://Graphene';
 import St from 'gi://St';
-
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+
 import Cursor from './cursor.js';
 
 export default class Effect extends St.Icon {

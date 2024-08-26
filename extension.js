@@ -7,7 +7,19 @@ import { getPointerWatcher } from 'resource:///org/gnome/shell/ui/pointerWatcher
 import { Field } from './const.js';
 import Effect from './effect.js';
 import History from './history.js';
-import { initSettings } from './utils.js';
+
+const initSettings = (settings, entries) => {
+    const getValue = (name, type) => ({
+        'b': () => settings.get_boolean(name),
+        'd': () => settings.get_double(name),
+        'i': () => settings.get_int(name),
+        's': () => settings.get_string(name),
+    }[type]());
+    entries.forEach(([name, type, func]) => {
+        func(getValue(name, type));
+        settings.connect(`changed::${name}`, () => func(getValue(name, type)));
+    });
+};
 
 export default class WiggleExtension extends Extension {
     _onCheckIntervalChange(interval) {
@@ -31,7 +43,6 @@ export default class WiggleExtension extends Extension {
     }
 
     _checkCursorHiddenByProgram() {
-        // log(this._effect.cursor.sprite)
         // different program might take other methods to hide the cursor, so this check should contain more conditions
         if (!this._effect.cursor.sprite) {
             if (!this._isHiddenByProgram) {
@@ -82,16 +93,16 @@ export default class WiggleExtension extends Extension {
         this._effect = new Effect();
         this._settings = this.getSettings();
         initSettings(this._settings, [
-            [Field.HIDE, 'b', (r) => (this._effect.isHidden = r)],
-            [Field.SIZE, 'i', (r) => (this._effect.cursorSize = r)],
-            [Field.PATH, 's', (r) => (this._effect.cursorPath = r)],
-            [Field.MAGN, 'i', (r) => (this._effect.magnifyDuration = r)],
-            [Field.UMGN, 'i', (r) => (this._effect.unmagnifyDuration = r)],
-            [Field.DLAY, 'i', (r) => (this._effect.unmagnifyDelay = r)],
+            [Field.HIDE, 'b', (r) => {this._effect.isHidden = r}],
+            [Field.SIZE, 'i', (r) => {this._effect.cursorSize = r}],
+            [Field.PATH, 's', (r) => {this._effect.cursorPath = r}],
+            [Field.MAGN, 'i', (r) => {this._effect.magnifyDuration = r}],
+            [Field.UMGN, 'i', (r) => {this._effect.unmagnifyDuration = r}],
+            [Field.DLAY, 'i', (r) => {this._effect.unmagnifyDelay = r}],
 
-            [Field.SAMP, 'i', (r) => (this._history.sampleSize = r)],
-            [Field.RADI, 'i', (r) => (this._history.radiansThreshold = r)],
-            [Field.DIST, 'i', (r) => (this._history.distanceThreshold = r)],
+            [Field.SAMP, 'i', (r) => {this._history.sampleSize = r}],
+            [Field.RADI, 'i', (r) => {this._history.radiansThreshold = r}],
+            [Field.DIST, 'i', (r) => {this._history.distanceThreshold = r}],
             [Field.CHCK, 'i', (r) => this._onCheckIntervalChange(r)],
             [Field.DRAW, 'i', (r) => this._onDrawIntervalChange(r)],
         ]);

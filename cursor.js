@@ -23,12 +23,8 @@ export default class Cursor {
             seat.uninhibit_unfocus();
         }
 
-        if (this._visibilityChangedId) {
-            this._tracker.disconnect(this._visibilityChangedId);
-            this._visibilityChangedId = null;
-
-            this._tracker.set_pointer_visible(true);
-        }
+        this._tracker.disconnectObject(this);
+        this._tracker.set_pointer_visible(true);
     }
 
     hide() {
@@ -38,13 +34,15 @@ export default class Cursor {
             seat.inhibit_unfocus();
         }
 
-        if (!this._visibilityChangedId) {
-            this._tracker.set_pointer_visible(false);
-            this._visibilityChangedId = this._tracker.connect('visibility-changed', () => {
+        this._tracker.set_pointer_visible(false);
+        this._tracker.disconnectObject(this);
+        this._tracker.connectObject(
+            'visibility-changed', () => {
                 if (this._tracker.get_pointer_visible()) {
                     this._tracker.set_pointer_visible(false);
                 }
-            });
-        }
+            },
+            this
+        );
     }
 }
