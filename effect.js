@@ -83,12 +83,14 @@ export default class Effect extends St.Icon {
                     this._isInTransition = false;
                 },
             });
+            this._unmagnifyDelayId = null;
+            return GLib.SOURCE_REMOVE;
         });
     }
 
     destroy() {
         if (this._unmagnifyDelayId) {
-            GLib.source_remove(this._unmagnifyDelayId);
+            GLib.Source.remove(this._unmagnifyDelayId);
         }
     }
 }

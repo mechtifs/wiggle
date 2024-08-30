@@ -23,12 +23,12 @@ const initSettings = (settings, entries) => {
 
 export default class WiggleExtension extends Extension {
     _onCheckIntervalChange(interval) {
-        if (this._checkIntervalWatcher) {
-            GLib.source_remove(this._checkIntervalWatcher);
+        if (this._checkTimeoutId) {
+            GLib.Source.remove(this._checkTimeoutId);
         }
-        this._checkIntervalWatcher = GLib.timeout_add(GLib.PRIORITY_DEFAULT, interval, () => {
+        this._checkTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, interval, () => {
             if (this._checkCursorHiddenByProgram()) {
-                return true;
+                return GLib.SOURCE_CONTINUE;
             }
             if (this._history.check()) {
                 if (!this._effect.isWiggling) {
@@ -38,7 +38,7 @@ export default class WiggleExtension extends Extension {
             } else if (this._effect.isWiggling) {
                 this._effect.unmagnify();
             }
-            return true;
+            return GLib.SOURCE_CONTINUE;
         });
     }
 
@@ -59,10 +59,10 @@ export default class WiggleExtension extends Extension {
 
     _onDrawIntervalChange(interval) {
         this._drawInterval = interval;
-        if (this._drawIntervalWatcher) {
-            this._pointerWatcher._removeWatch(this._drawIntervalWatcher);
+        if (this._drawIntervalWatch) {
+            this._pointerWatcher._removeWatch(this._drawIntervalWatch);
         }
-        this._drawIntervalWatcher = this._pointerWatcher.addWatch(interval, (x, y) => {
+        this._drawIntervalWatch = this._pointerWatcher.addWatch(interval, (x, y) => {
             this._history.push(x, y);
             if (this._effect.isWiggling) {
                 this._effect.move(x, y);
@@ -72,16 +72,16 @@ export default class WiggleExtension extends Extension {
 
     _togglePointerWatcher(state) {
         if (state) {
-            if (!this._drawIntervalWatcher) {
+            if (!this._drawIntervalWatch) {
                 this._onDrawIntervalChange(this._drawInterval);
             }
         } else {
             if (this._effect.isWiggling) {
                 this._effect.unmagnify();
             }
-            if (this._drawIntervalWatcher) {
-                this._pointerWatcher._removeWatch(this._drawIntervalWatcher);
-                this._drawIntervalWatcher = null;
+            if (this._drawIntervalWatch) {
+                this._pointerWatcher._removeWatch(this._drawIntervalWatch);
+                this._drawIntervalWatch = null;
                 this._history.clear();
             }
         }
@@ -109,8 +109,8 @@ export default class WiggleExtension extends Extension {
     }
 
     disable() {
-        if (this._checkIntervalWatcher) {
-            GLib.source_remove(this._checkIntervalWatcher);
+        if (this._checkTimeoutId) {
+            GLib.Source.remove(this._checkTimeoutId);
         }
         this._togglePointerWatcher(false);
         this._effect.destroy();
