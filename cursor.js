@@ -4,7 +4,7 @@ import Clutter from 'gi://Clutter';
 
 export default class Cursor {
     constructor() {
-		this._tracker = global.backend.get_cursor_tracker(global.display);
+        this._tracker = global.backend.get_cursor_tracker(global.display);
     }
 
     get hot() {
