@@ -1,11 +1,10 @@
 'use strict';
 
 import Clutter from 'gi://Clutter';
-import Meta from 'gi://Meta';
 
 export default class Cursor {
     constructor() {
-        this._tracker = Meta.CursorTracker.get_for_display(global.display);
+        this._tracker = global.backend.get_cursor_tracker(global.display);
     }
 
     get hot() {

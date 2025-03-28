@@ -3,7 +3,8 @@
   "name": "Wiggle",
   "shell-version": [
     "46",
-    "47"
+    "47",
+    "48"
   ],
   "url": "https://github.com/mechtifs/wiggle",
   "uuid": "wiggle@mechtifs",
