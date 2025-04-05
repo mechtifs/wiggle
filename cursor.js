@@ -1,10 +1,16 @@
 'use strict';
 
 import Clutter from 'gi://Clutter';
+import * as Config from 'resource:///org/gnome/shell/misc/config.js';
+import Meta from 'gi://Meta';
 
 export default class Cursor {
     constructor() {
-        this._tracker = global.backend.get_cursor_tracker(global.display);
+        if (Config.PACKAGE_VERSION  <= 47) {
+            this._tracker = Meta.CursorTracker.get_for_display(global.display);
+        } else {
+            this._tracker = global.backend.get_cursor_tracker(global.display);
+        }
     }
 
     get hot() {
