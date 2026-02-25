@@ -4,7 +4,7 @@ import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
-import { ExtensionPreferences, gettext } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences, gettext } from 'resource:///org/gnome/shell/extensions/js/extensions/prefs.js';
 
 import { Field } from './const.js';
 
