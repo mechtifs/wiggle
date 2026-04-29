@@ -34,5 +34,56 @@
     <key name="draw-interval" type="i">
       <default>8</default>
     </key>
+    <key name="effect-mode" type="s">
+      <default>'magnification'</default>
+    </key>
+    <key name="trigger-type" type="s">
+      <default>'motion'</default>
+    </key>
+    <key name="trigger-key" type="s">
+      <default>'Control'</default>
+    </key>
+    <key name="halo-color" type="s">
+      <default>'#ffffff'</default>
+    </key>
+    <key name="halo-radius" type="i">
+      <default>50</default>
+    </key>
+    <key name="halo-opacity" type="d">
+      <default>0.5</default>
+    </key>
+    <key name="spotlight-color" type="s">
+      <default>'#ffff00'</default>
+    </key>
+    <key name="spotlight-size" type="i">
+      <default>150</default>
+    </key>
+    <key name="spotlight-opacity" type="d">
+      <default>0.8</default>
+    </key>
+    <key name="laser-color" type="s">
+      <default>'#ff0000'</default>
+    </key>
+    <key name="laser-thickness" type="i">
+      <default>4</default>
+    </key>
+    <key name="laser-length" type="i">
+      <default>100</default>
+    </key>
+    <key name="trail-color" type="s">
+      <default>'#00ff00'</default>
+    </key>
+    <key name="trail-length" type="i">
+      <default>15</default>
+    </key>
+    <key name="trail-fade-duration" type="i">
+      <default>2000</default>
+    </key>
+    <key name="arrow-color" type="s">
+      <default>'#00ffff'</default>
+    </key>
+    <key name="arrow-size" type="i">
+      <default>30</default>
+    </key>
   </schema>
 </schemalist>

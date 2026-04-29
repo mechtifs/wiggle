@@ -1,10 +1,11 @@
 'use strict';
 
 import Clutter from 'gi://Clutter';
+import Meta from 'gi://Meta';
 
 export default class Cursor {
     constructor() {
-        this._tracker = global.backend.get_cursor_tracker(global.display);
+        this._tracker = Meta.CursorTracker.get_for_display(global.display);
     }
 
     get hot() {
@@ -16,24 +17,13 @@ export default class Cursor {
     }
 
     show() {
-        const seat = Clutter.get_default_backend().get_default_seat();
-
-        if (seat.is_unfocus_inhibited()) {
-            seat.uninhibit_unfocus();
-        }
-
         this._tracker.disconnectObject(this);
         this._tracker.set_pointer_visible(true);
     }
 
     hide() {
-        const seat = Clutter.get_default_backend().get_default_seat();
-
-        if (!seat.is_unfocus_inhibited()) {
-            seat.inhibit_unfocus();
-        }
-
         this._tracker.set_pointer_visible(false);
+        
         this._tracker.disconnectObject(this);
         this._tracker.connectObject(
             'visibility-changed', () => {
@@ -43,5 +33,12 @@ export default class Cursor {
             },
             this
         );
+    }
+
+    destroy() {
+        if (this._tracker) {
+            this._tracker.disconnectObject(this);
+            this._tracker = null;
+        }
     }
 }

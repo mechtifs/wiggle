@@ -1,0 +1,11 @@
+{
+    "name": "wiggle-tests",
+    "version": "1.0.0",
+    "description": "Unit tests for Wiggle GNOME extension",
+    "main": "tests/index.js",
+    "type": "module",
+"scripts": {
+    "test": "node tests/runner.mjs",
+    "test:mocha": "mocha --require ./tests/mocks/gjs.js tests/**/*.test.js"
+}
+}
