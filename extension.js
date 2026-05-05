@@ -57,10 +57,17 @@ export default class WiggleExtension extends Extension {
         return false;
     }
 
+    _removeDrawWatch() {
+        if (this._drawIntervalWatch && this._pointerWatcher._removeWatch) {
+            this._pointerWatcher._removeWatch(this._drawIntervalWatch);
+        }
+        this._drawIntervalWatch = null;
+    }
+
     _onDrawIntervalChange(interval) {
         this._drawInterval = interval;
         if (this._drawIntervalWatch) {
-            this._pointerWatcher._removeWatch(this._drawIntervalWatch);
+            this._removeDrawWatch();
         }
         this._drawIntervalWatch = this._pointerWatcher.addWatch(interval, (x, y) => {
             this._history.push(x, y);
@@ -80,8 +87,7 @@ export default class WiggleExtension extends Extension {
                 this._effect.unmagnify();
             }
             if (this._drawIntervalWatch) {
-                this._pointerWatcher._removeWatch(this._drawIntervalWatch);
-                this._drawIntervalWatch = null;
+                this._removeDrawWatch();
                 this._history.clear();
             }
         }
