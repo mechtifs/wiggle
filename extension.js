@@ -2,11 +2,32 @@
 
 import GLib from 'gi://GLib';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
-import { getPointerWatcher } from 'resource:///org/gnome/shell/ui/pointerWatcher.js';
 
 import { Field } from './const.js';
 import Effect from './effect.js';
 import History from './history.js';
+
+// GNOME Shell 51 dropped ui/pointerWatcher.js. Use it when available and
+// otherwise fall back to polling the pointer position with a timer.
+let getPointerWatcher;
+try {
+    ({ getPointerWatcher } = await import('resource:///org/gnome/shell/ui/pointerWatcher.js'));
+} catch (e) {
+    getPointerWatcher = () => ({
+        addWatch(interval, callback) {
+            const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, Math.max(interval, 1), () => {
+                const [x, y] = global.get_pointer();
+                callback(x, y);
+                return GLib.SOURCE_CONTINUE;
+            });
+            return { id };
+        },
+        _removeWatch(watch) {
+            if (watch?.id)
+                GLib.Source.remove(watch.id);
+        },
+    });
+}
 
 const initSettings = (settings, entries) => {
     const getValue = (name, type) => ({
@@ -57,10 +78,17 @@ export default class WiggleExtension extends Extension {
         return false;
     }
 
+    _removeDrawWatch() {
+        if (this._drawIntervalWatch && this._pointerWatcher._removeWatch) {
+            this._pointerWatcher._removeWatch(this._drawIntervalWatch);
+        }
+        this._drawIntervalWatch = null;
+    }
+
     _onDrawIntervalChange(interval) {
         this._drawInterval = interval;
         if (this._drawIntervalWatch) {
-            this._pointerWatcher._removeWatch(this._drawIntervalWatch);
+            this._removeDrawWatch();
         }
         this._drawIntervalWatch = this._pointerWatcher.addWatch(interval, (x, y) => {
             this._history.push(x, y);
@@ -80,8 +108,7 @@ export default class WiggleExtension extends Extension {
                 this._effect.unmagnify();
             }
             if (this._drawIntervalWatch) {
-                this._pointerWatcher._removeWatch(this._drawIntervalWatch);
-                this._drawIntervalWatch = null;
+                this._removeDrawWatch();
                 this._history.clear();
             }
         }

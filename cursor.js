@@ -1,10 +1,9 @@
 'use strict';
 
-import Clutter from 'gi://Clutter';
-
 export default class Cursor {
     constructor() {
-        this._tracker = global.backend.get_cursor_tracker(global.display);
+        this._tracker = global.backend.get_cursor_tracker();
+        this._isHidden = false;
     }
 
     get hot() {
@@ -16,32 +15,16 @@ export default class Cursor {
     }
 
     show() {
-        const seat = Clutter.get_default_backend().get_default_seat();
-
-        if (seat.is_unfocus_inhibited()) {
-            seat.uninhibit_unfocus();
+        if (this._isHidden) {
+            this._tracker.uninhibit_cursor_visibility();
+            this._isHidden = false;
         }
-
-        this._tracker.disconnectObject(this);
-        this._tracker.set_pointer_visible(true);
     }
 
     hide() {
-        const seat = Clutter.get_default_backend().get_default_seat();
-
-        if (!seat.is_unfocus_inhibited()) {
-            seat.inhibit_unfocus();
+        if (!this._isHidden) {
+            this._tracker.inhibit_cursor_visibility();
+            this._isHidden = true;
         }
-
-        this._tracker.set_pointer_visible(false);
-        this._tracker.disconnectObject(this);
-        this._tracker.connectObject(
-            'visibility-changed', () => {
-                if (this._tracker.get_pointer_visible()) {
-                    this._tracker.set_pointer_visible(false);
-                }
-            },
-            this
-        );
     }
 }

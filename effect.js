@@ -54,7 +54,7 @@ export default class Effect extends St.Icon {
         this.remove_all_transitions();
         this.ease({
             duration: this.magnifyDuration,
-            transition: Clutter.AnimationMode.EASE_IN_QUAD,
+            mode: Clutter.AnimationMode.EASE_IN_QUAD,
             scale_x: 1.0,
             scale_y: 1.0,
             pivot_point: this._pivot,
